@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <div class="container">
+        <h1>Task Manager</h1>
+
+        <button id="addBtn">Add</button>
+
+        <div class="filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="active">Active</button>
+          <button class="filter-btn" data-filter="completed">Completed</button>
+        </div>
+
+        <ul id="taskList"></ul>
+      </div>
+      <div class="form">
+        <div>
+          <button class="closeBtn">❌</button>
+          <h1>Add Task</h1>
+          <form>
+            <input type="text" id="title" placeholder="Add Title" required/>
+            <input type="text" id="category" placeholder="Add Category" required/>
+            <button type="submit">Add</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
