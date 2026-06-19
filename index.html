@@ -8,15 +8,15 @@
   </head>
   <body>
     <main>
-      <div class="container">
+      <div class="topContainer">
         <h1>Task Manager</h1>
 
         <button id="addBtn">Add</button>
 
         <div class="filters">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="active">Active</button>
-          <button class="filter-btn" data-filter="completed">Completed</button>
+          <button class="filter-btn active" data-id="All">All</button>
+          <button class="filter-btn" data-id="Active">Active</button>
+          <button class="filter-btn" data-id="Completed">Completed</button>
         </div>
 
         <ul id="taskList"></ul>
@@ -26,10 +26,158 @@
           <button class="closeBtn">❌</button>
           <h1>Add Task</h1>
           <form>
-            <input type="text" id="title" placeholder="Add Title" required/>
-            <input type="text" id="category" placeholder="Add Category" required/>
+            <input type="text" id="title" placeholder="Add Title" required />
+            <input
+              type="text"
+              id="category"
+              placeholder="Add Category"
+              required
+            />
             <button type="submit">Add</button>
           </form>
+        </div>
+      </div>
+      <div class="bottomContainer">
+        <h1>🌐 Browser Rendering Pipeline</h1>
+
+        <div class="flow-diagram">
+          <!-- HTML FLOW -->
+          <div class="flow-row">
+            <div class="card html">
+              <h3>HTML</h3>
+              <p>Browser downloads HTML document.</p>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="card tokenize">
+              <h3>Tokenization</h3>
+              <p>
+                Converts raw HTML text into tokens such as tags, attributes and
+                text nodes.
+              </p>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="card parse">
+              <h3>Parsing</h3>
+              <p>
+                Browser analyzes tokens and understands the document structure.
+              </p>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="card dom">
+              <h3>DOM Tree</h3>
+              <p>Tree representation of all HTML elements.</p>
+            </div>
+          </div>
+
+          <!-- CSS FLOW -->
+          <div class="flow-row">
+            <div class="card css">
+              <h3>CSS</h3>
+              <p>Browser loads stylesheets</p>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="card tokenize">
+              <h3>Tokenization</h3>
+              <p>Converts CSS text into selectors, properties and values.</p>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="card parse">
+              <h3>Parsing</h3>
+              <p>Creates a structured stylesheet model.</p>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="card cssom">
+              <h3>CSSOM</h3>
+              <p>CSS Object Model containing all styles.</p>
+            </div>
+          </div>
+
+          <!-- JS FLOW -->
+          <div class="flow-row">
+            <div class="card js">
+              <h3>JavaScript</h3>
+              <p>Browser downloads JS</p>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="card tokenize">
+              <h3>Tokenization</h3>
+              <p>Breaks code into keywords, identifiers and operators.</p>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="card parse">
+              <h3>Parsing</h3>
+              <p>Creates AST (Abstract Syntax Tree).</p>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="card ast">
+              <h3>AST</h3>
+              <p>Structured representation of code.</p>
+            </div>
+          </div>
+
+          <!-- MERGE -->
+          <div class="vertical-arrow">⬇</div>
+
+          <div class="card render">
+            <h2>Render Tree</h2>
+            <p>
+              DOM + CSSOM combine together. Hidden elements (display:none) are
+              excluded.
+            </p>
+          </div>
+
+          <div class="vertical-arrow">⬇</div>
+
+          <div class="card layout">
+            <h2>Layout (Reflow)</h2>
+            <p>
+              Calculates width, height and position of every visible element.
+            </p>
+          </div>
+
+          <div class="vertical-arrow">⬇</div>
+
+          <div class="card paint">
+            <h2>Paint</h2>
+            <p>
+              Converts layout information into pixels. Draws text, colors,
+              borders and images.
+            </p>
+          </div>
+
+          <div class="vertical-arrow">⬇</div>
+
+          <div class="card composite">
+            <h2>Compositing</h2>
+            <p>
+              Combines multiple layers using the GPU for better performance.
+            </p>
+          </div>
+
+          <div class="vertical-arrow">⬇</div>
+
+          <div class="card screen">
+            <h2>Pixels On Screen</h2>
+            <p>Final rendered webpage visible to the user.</p>
+          </div>
         </div>
       </div>
     </main>

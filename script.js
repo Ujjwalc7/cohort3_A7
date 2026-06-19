@@ -2,11 +2,16 @@ const formDiv = document.querySelector(".form");
 const addBtn = document.querySelector("#addBtn");
 const closeBtn = document.querySelector(".closeBtn");
 const taskList = document.querySelector("#taskList");
+const filterBtn = document.querySelectorAll(".filter-btn");
 const form = document.querySelector("form");
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
 const ui = (obj) => {
   taskList.innerHTML = "";
+  if(tasks.length === 0){
+  taskList.innerHTML = "<h1>No task to show!</h1>";
+  return;
+  }
   tasks.forEach((element) => {
     taskList.innerHTML += `<div class="task-card">
   <div class="task-content">
@@ -28,6 +33,20 @@ const ui = (obj) => {
   });
 };
 
+filterBtn.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    filterBtn.forEach((btn) => btn.classList.remove("active"));
+    btn.classList.add("active");
+    if (btn.dataset.id === "All") {
+      tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      ui();
+    } else {
+      tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      tasks = tasks.filter((task) => task.status === btn.dataset.id);
+      ui();
+    }
+  });
+});
 addBtn.addEventListener("click", () => {
   formDiv.style.display = "flex";
 });
