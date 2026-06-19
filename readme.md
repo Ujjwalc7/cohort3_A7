@@ -1,3 +1,50 @@
+# Browser Rendering Pipeline & Event Propagation
+
+A comprehensive guide to understanding how browsers render web pages, process HTML/CSS/JavaScript, and handle events.
+
+---
+
+# Table of Contents
+
+* Browser Rendering Pipeline
+* HTML Processing
+
+  * Tokenization
+  * Parsing
+  * DOM Tree
+* CSS Processing
+
+  * Tokenization
+  * Parsing
+  * CSSOM Tree
+* Render Tree Creation
+* Layout (Reflow)
+* Paint
+* Compositing
+* JavaScript Processing
+
+  * Tokenization
+  * Parsing
+  * AST
+  * Execution
+* DOM Updates & Re-rendering
+* Event Propagation
+
+  * Event Capturing
+  * Target Phase
+  * Event Bubbling
+  * stopPropagation()
+* Event Delegation
+
+  * Without Event Delegation
+  * With Event Delegation
+  * Benefits
+
+---
+
+# Browser Rendering Pipeline
+
+```text
 HTML
  │
  ▼
@@ -40,124 +87,235 @@ CSSOM Tree                  AST
                 │
                 ▼
         Pixels on Screen
+```
 
-----------------*****----------------
+---
 
+# HTML Processing
 
-                -----HTML-----
+## 1. HTML Download
 
-HTML- Browser downloads HTML document.
+The browser first downloads the HTML document from the server.
 
-HTML Tokenization - The browser converts the raw text into tokens:
-                    START_TAG(body)
-                    START_TAG(h1)
-                    TEXT(Hello)
-                    END_TAG(h1)
-                    START_TAG(p)
-                    TEXT(Welcome)
-                    END_TAG(p)
-                    END_TAG(body)
+Example:
 
-HTML Parsing - The parser uses these tokens to build the DOM:
-                body
-                ├── h1
-                │   └── "Hello"
-                └── p
-                    └── "Welcome"
+```html
+<body>
+  <h1>Hello</h1>
+  <p>Welcome</p>
+</body>
+```
 
+---
 
+## 2. HTML Tokenization
 
+The browser converts raw HTML text into tokens.
 
+Example Tokens:
 
-         -----------CSS Processing-----------
+```text
+START_TAG(body)
+START_TAG(h1)
+TEXT(Hello)
+END_TAG(h1)
+START_TAG(p)
+TEXT(Welcome)
+END_TAG(p)
+END_TAG(body)
+```
 
-CSS - Browser loads stylesheets.
-        h1 {
-        color: blue;
-        }
+---
 
-        p {
-        color: gray;
-        }
+## 3. HTML Parsing
 
+The parser uses these tokens to construct the DOM Tree.
 
-CSS Tokenization - Converts CSS text into selectors, properties and values.
-                    IDENT(h1)
-                    {
-                    PROPERTY(color)
-                    VALUE(blue)
-                    }
+```text
+body
+├── h1
+│   └── "Hello"
+└── p
+    └── "Welcome"
+```
 
+The DOM (Document Object Model) is a tree-like representation of the HTML document.
 
-CSS Parsing - Creates a structured stylesheet model.
-                Stylesheet
-                ├── h1 → color: blue
-                └── p → color: gray
+---
 
+# CSS Processing
 
+## CSS Download
 
-              ----------Render Tree Creation----------
+The browser loads external and internal stylesheets.
 
-The browser combines: DOM + CSSOM
+Example:
 
-TO Create: body
-            ├── h1 (blue)
-            └── p (gray)
+```css
+h1 {
+  color: blue;
+}
 
-This is called the Render Tree.
+p {
+  color: gray;
+}
+```
 
-Elements with display: none; are excluded.
+---
 
-Layout (Reflow): The browser calculates the size and position of each visible element.
-                    h1
-                    x: 0
-                    y: 0
-                    width: 500
-                    height: 50
+## CSS Tokenization
 
-                    p
-                    x: 0
-                    y: 60
-                    width: 500
-                    height: 20
+The CSS source code is broken into tokens.
 
+```text
+IDENT(h1)
+{
+PROPERTY(color)
+VALUE(blue)
+}
+```
 
-Paint: The browser converts layout information into drawing instructions.
-        Draw yellow background
-        Draw blue text
-        Draw border
-        Draw image
+---
 
-Nothing is displayed yet; the browser is preparing pixels.
+## CSS Parsing
 
-Compositing: The browser organizes content into layers.
-                Layer 1: Background
-                Layer 2: Text
-                Layer 3: Animated Card
+The parser creates the CSSOM (CSS Object Model).
 
-The GPU combines these layers:  Layer 1
-                                +
-                                Layer 2
-                                +
-                                Layer 3
-                                =
-                                Final Screen
+```text
+Stylesheet
+├── h1 → color: blue
+└── p → color: gray
+```
 
+---
 
-             ---------------Where JavaScript Fits------------------
+# Render Tree Creation
 
-When the browser encounters:  <script src="app.js"></script>
+The browser combines:
 
+```text
+DOM + CSSOM
+```
 
-it:
+to create the Render Tree.
 
-1. Downloads the script
-2. Tokenizes the JavaScript
-3. Parses it into an AST (Abstract Syntax Tree)
-4. Compiles/interprets it
-5. Executes it
+Example:
 
+```text
+body
+├── h1 (blue)
+└── p (gray)
+```
 
+### Important
+
+Elements with:
+
+```css
+display: none;
+```
+
+are excluded from the Render Tree.
+
+---
+
+# Layout (Reflow)
+
+The browser calculates:
+
+* Position
+* Width
+* Height
+* Margins
+* Padding
+
+for every visible element.
+
+Example:
+
+```text
+h1
+x: 0
+y: 0
+width: 500
+height: 50
+
+p
+x: 0
+y: 60
+width: 500
+height: 20
+```
+
+---
+
+# Paint
+
+The browser converts layout information into drawing instructions.
+
+Example:
+
+```text
+Draw background
+Draw text
+Draw borders
+Draw images
+```
+
+At this stage, the browser knows what to draw but has not yet displayed it on the screen.
+
+---
+
+# Compositing
+
+The browser separates content into layers.
+
+Example:
+
+```text
+Layer 1: Background
+Layer 2: Text
+Layer 3: Animated Card
+```
+
+The GPU combines them:
+
+```text
+Layer 1
++
+Layer 2
++
+Layer 3
+=
+Final Screen
+```
+
+The final pixels are then displayed on the screen.
+
+---
+
+# JavaScript Processing
+
+When the browser encounters:
+
+```html
+<script src="app.js"></script>
+```
+
+it performs the following steps:
+
+1. Downloads the JavaScript file
+2. Tokenizes the code
+3. Parses the tokens
+4. Creates an AST
+5. Compiles/Interprets
+6. Executes
+
+---
+
+## JavaScript Pipeline
+
+```text
 JavaScript Source
        │
        ▼
@@ -170,39 +328,78 @@ JavaScript Source
       AST
        │
        ▼
- Execution
+   Execution
+```
 
+---
 
- If JavaScript modifies the DOM:  document.querySelector("h1").textContent = "Hi";
+## AST (Abstract Syntax Tree)
 
+Example:
 
- the browser may need to:   DOM Update
-                                │
-                                ▼
-                        Render Tree Update
-                                │
-                                ▼
-                              Layout
-                                │
-                                ▼
-                              Paint
-                                │
-                                ▼
-                            
-                            
+```js
+let x = 10;
+```
 
+AST:
 
-                            ------------Event Capturing & Event Bubbling---------------
+```text
+VariableDeclaration
+└── Identifier(x)
+└── Literal(10)
+```
 
-Event Capturing and Event Bubbling are phases of event propagation.
+The JavaScript engine uses the AST to understand and execute code.
 
+---
 
-1. Event Capturing (Top → Down)
+# DOM Updates & Re-rendering
 
-Also called the capture phase.
+When JavaScript modifies the DOM:
 
-The event starts from the root and moves downward toward the target element.
+```js
+document.querySelector("h1").textContent = "Hi";
+```
 
+the browser may need to:
+
+```text
+DOM Update
+     │
+     ▼
+Render Tree Update
+     │
+     ▼
+Layout
+     │
+     ▼
+Paint
+     │
+     ▼
+Composite
+```
+
+This process updates the UI.
+
+---
+
+# Event Propagation
+
+Event propagation describes how events travel through the DOM.
+
+It consists of three phases:
+
+1. Capturing Phase
+2. Target Phase
+3. Bubbling Phase
+
+---
+
+# Event Capturing
+
+The event travels from the root element down to the target.
+
+```text
 document
    ↓
 html
@@ -214,9 +411,11 @@ grandparent
 parent
    ↓
 button
+```
 
-Example: 
+Example:
 
+```js
 grandparent.addEventListener(
   "click",
   () => {
@@ -233,38 +432,42 @@ parent.addEventListener(
   true
 );
 
-child.addEventListener(
+button.addEventListener(
   "click",
   () => {
     console.log("Button Capture");
   },
   true
 );
+```
 
+Output:
 
-Clicking the button prints:
-
+```text
 Grandparent Capture
 Parent Capture
 Button Capture
+```
 
-The event is traveling downward.
+---
 
+# Target Phase
 
+The event reaches the element that triggered it.
 
-2. Target Phase
-
-The event reaches the actual element that triggered it.
-
+```text
 button ← target
+```
 
-At this point, handlers on the button can execute.
+Handlers attached to the target element execute here.
 
+---
 
-3. Event Bubbling (Bottom → Up)
+# Event Bubbling
 
-After reaching the target, the event travels back up.
+The event travels upward after reaching the target.
 
+```text
 button
   ↑
 parent
@@ -276,11 +479,11 @@ body
 html
   ↑
 document
-
-This is the default behavior in JavaScript.
+```
 
 Example:
 
+```js
 grandparent.addEventListener("click", () => {
   console.log("Grandparent Bubble");
 });
@@ -289,31 +492,41 @@ parent.addEventListener("click", () => {
   console.log("Parent Bubble");
 });
 
-child.addEventListener("click", () => {
+button.addEventListener("click", () => {
   console.log("Button Bubble");
 });
+```
 
 Output:
 
+```text
 Button Bubble
 Parent Bubble
 Grandparent Bubble
+```
 
-The event is traveling upward.
+---
 
-Complete Flow:
+# Complete Event Flow
 
-Suppose all listeners are attached:
+```js
+grandparent.addEventListener(
+  "click",
+  () => {
+    console.log("Grandparent Capture");
+  },
+  true
+);
 
-grandparent.addEventListener("click", () => {
-  console.log("Grandparent Capture");
-}, true);
+parent.addEventListener(
+  "click",
+  () => {
+    console.log("Parent Capture");
+  },
+  true
+);
 
-parent.addEventListener("click", () => {
-  console.log("Parent Capture");
-}, true);
-
-child.addEventListener("click", () => {
+button.addEventListener("click", () => {
   console.log("Button");
 });
 
@@ -324,146 +537,241 @@ parent.addEventListener("click", () => {
 grandparent.addEventListener("click", () => {
   console.log("Grandparent Bubble");
 });
+```
 
 Output:
 
+```text
 Grandparent Capture
 Parent Capture
 Button
 Parent Bubble
 Grandparent Bubble
+```
 
+---
 
-stopPropagation()
+# stopPropagation()
 
 Stops the event from moving further.
 
-child.addEventListener("click", (e) => {
+```js
+button.addEventListener("click", (e) => {
   e.stopPropagation();
 });
+```
 
-Now parent and grandparent handlers won't execute during bubbling.
+Now parent and grandparent listeners will not execute during bubbling.
 
+---
 
+# Event Delegation
 
-
-
-
-                         ------------------Event Delegation-----------------
-
-Event Delegation is a technique where you attach a single event listener to a parent element instead of attaching listeners to multiple child elements.
+Event Delegation is a technique where a single event listener is attached to a parent element instead of multiple child elements.
 
 It works because of event bubbling.
 
+---
 
+# Without Event Delegation
 
-----------Without Event Delegation----------------
-
-Suppose you have 100 buttons:
-
+```html
 <button>Button 1</button>
 <button>Button 2</button>
 <button>Button 3</button>
-...
-<button>Button 100</button>
+```
 
-You might write:
-
+```js
 const buttons = document.querySelectorAll("button");
 
-buttons.forEach(button => {
+buttons.forEach((button) => {
   button.addEventListener("click", () => {
     console.log(button.textContent);
   });
 });
+```
 
-Problem:
-100 event listeners
-More memory usage
-More setup work
+### Problems
 
+* Multiple listeners
+* More memory consumption
+* Harder maintenance
 
+---
 
-----------With Event Delegation----------
+# With Event Delegation
 
-Wrap the buttons in a parent:
-
+```html
 <div id="container">
   <button>Button 1</button>
   <button>Button 2</button>
   <button>Button 3</button>
 </div>
+```
 
-Attach a single listener to the parent:
-
+```js
 const container = document.getElementById("container");
 
 container.addEventListener("click", (event) => {
   console.log(event.target.textContent);
 });
+```
 
-Now clicking any button prints:
+Output:
 
+```text
 Button 1
+```
 
 or
 
+```text
 Button 2
+```
 
 or
 
+```text
 Button 3
+```
 
+---
 
--------How It Works----------
+# How Event Delegation Works
 
 When Button 2 is clicked:
 
+```text
 Button 2
-    ↑
+   ↑
 Container
+```
 
-The click event first occurs on the button and then bubbles up to the parent container.
+The event bubbles up to the parent.
 
-The parent's listener catches it.
+The parent listener catches the event.
 
+---
+
+## event.target
+
+The key concept behind event delegation is:
+
+```js
 event.target
+```
 
-The key to event delegation is:
-
-event.target
-
-It refers to the element that actually triggered the event.
+It refers to the element that originally triggered the event.
 
 Example:
 
+```js
 container.addEventListener("click", (event) => {
   console.log(event.target);
 });
+```
 
-Clicking Button 1 outputs:
+Output:
 
+```html
 <button>Button 1</button>
+```
 
+---
 
---------Why Use Event Delegation?------------
-1. Better Performance
+# Advantages of Event Delegation
+
+## 1. Better Performance
 
 Instead of:
 
+```text
 1000 listeners
+```
 
 Use:
 
-1. listener
-2. Less Memory Usage
+```text
+1 listener
+```
 
-Only one callback is stored.
+---
 
-3. Handles Dynamic Elements
+## 2. Less Memory Usage
 
-Newly added child elements work automatically.
+Only one callback function is stored.
 
-4. Cleaner Code
+---
 
-One centralized event handler.
+## 3. Handles Dynamic Elements
+
+Newly added child elements automatically work without adding new listeners.
+
+---
+
+## 4. Cleaner Code
+
+Event handling logic remains centralized and easier to maintain.
+
+---
+
+# Summary
+
+```text
+HTML
+  ↓
+Tokenization
+  ↓
+Parsing
+  ↓
+DOM
+
+CSS
+  ↓
+Tokenization
+  ↓
+Parsing
+  ↓
+CSSOM
+
+DOM + CSSOM
+      ↓
+ Render Tree
+      ↓
+   Layout
+      ↓
+    Paint
+      ↓
+ Composite
+      ↓
+ Screen
+
+JavaScript
+      ↓
+ Tokenization
+      ↓
+   Parsing
+      ↓
+     AST
+      ↓
+ Execution
+
+DOM Changes
+      ↓
+Render Tree Update
+      ↓
+ Layout
+      ↓
+ Paint
+      ↓
+Composite
+
+Events
+Capture → Target → Bubble
+
+Event Delegation
+= One Parent Listener
+= Better Performance
+= Less Memory Usage
+= Dynamic Element Support
+```
