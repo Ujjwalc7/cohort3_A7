@@ -10,6 +10,11 @@ body {
   background: #f4f4f4;
 }
 
+body.dark {
+  background-color: black;
+  color: white;
+}
+
 main {
   width: 100%;
   height: 100%;
@@ -27,9 +32,47 @@ main {
   position: relative;
 }
 
+body.dark .topContainer {
+  background-color: rgb(39, 39, 39);
+  color: white;
+}
+body.dark .topContainer h1 {
+  color: white;
+}
+
 h1 {
   text-align: center;
   margin-bottom: 20px;
+}
+
+/* //dark mode toggle button */
+.toggle-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+
+  width: 40px;
+  height: 40px;
+
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+
+  font-size: 1.5rem;
+
+  background: #222;
+  color: #fff;
+
+  transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+  transform: scale(1.1);
+}
+
+body.dark .toggle-btn {
+  background: #f5f5f5;
+  color: #222;
 }
 
 #addBtn {
@@ -83,6 +126,14 @@ h1 {
   background-color: rgba(0, 0, 0, 0.384);
 }
 
+body.dark .form div{
+  background-color:  rgb(39, 39, 39);
+}
+
+body.dark .form div h1{
+  color: white;
+}
+
 .form div {
   background-color: white;
   width: 50%;
@@ -113,6 +164,16 @@ h1 {
   outline: none;
   width: 100%;
   font-size: 1rem;
+}
+
+
+body.dark .form div form input::placeholder{
+  color: white;
+}
+
+body.dark .form div form input{
+  background-color: gray;
+  color: white;
 }
 
 .form div form button {
@@ -151,6 +212,14 @@ h1 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
   transition: 0.3s ease;
+}
+
+body.dark .task-card{
+  background-color: gray;
+}
+
+body.dark .task-card h3{
+  color: white;
 }
 
 .task-card:hover {
@@ -233,6 +302,14 @@ h1 {
   height: 95vh;
   overflow: auto;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+body.dark .bottomContainer {
+  background-color: rgb(39, 39, 39);
+  color: white;
+}
+
+body.dark .bottomContainer h1 {
+  color: white;
 }
 
 h1 {
